@@ -322,7 +322,7 @@ function App() {
 
       <div className="grid-container">
         <div className="section">
-          <h2>Left Canvas (Ads + Stories)</h2>
+          <h2>Output Canvas (Ads + Stories)</h2>
           <div
             ref={leftSectionRef}
             className="grid"
