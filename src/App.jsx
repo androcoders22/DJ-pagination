@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  // Grid configuration
-  const gridSize = 20; // Size of each grid cell in pixels
-  const gridWidth = 30; // Number of columns
-  const gridHeight = 20; // Number of rows
+  // State for dynamic grid configuration
+  const [gridSize, setGridSize] = useState(20); // Size of each grid cell in pixels
+  const [gridWidth, setGridWidth] = useState(30); // Number of columns
+  const [gridHeight, setGridHeight] = useState(20); // Number of rows
+  const [showGrid, setShowGrid] = useState(true);
+  const [columnSnap, setColumnSnap] = useState(true);
 
   // State for tracking shapes
   const [leftSectionShapes, setLeftSectionShapes] = useState([]); // Black/locked shapes
@@ -18,6 +20,36 @@ function App() {
   // Refs for each section
   const leftSectionRef = useRef(null);
   const rightSectionRef = useRef(null);
+  const containerRef = useRef(null);
+
+  // Update grid dimensions based on viewport size
+  useEffect(() => {
+    const updateGridDimensions = () => {
+      if (containerRef.current) {
+        const containerWidth = window.innerWidth * 0.9;
+        const containerHeight = window.innerHeight * 0.6;
+
+        // Each section gets half the width minus padding
+        const sectionWidth = containerWidth / 2 - 40;
+
+        // Calculate grid dimensions based on available space
+        const newGridSize = Math.floor(Math.min(20, sectionWidth / 30));
+        const newGridWidth = Math.floor(sectionWidth / newGridSize);
+        const newGridHeight = Math.floor(containerHeight / newGridSize);
+
+        setGridSize(newGridSize);
+        setGridWidth(newGridWidth);
+        setGridHeight(newGridHeight);
+      }
+    };
+
+    updateGridDimensions();
+    window.addEventListener("resize", updateGridDimensions);
+
+    return () => {
+      window.removeEventListener("resize", updateGridDimensions);
+    };
+  }, []);
 
   // Handle mouse down to start drawing
   const handleMouseDown = (e, section) => {
@@ -33,7 +65,7 @@ function App() {
       y,
       width: 1,
       height: 1,
-      color: section === "left" ? "black" : "green",
+      color: section === "left" ? "maroon" : "darkblue",
     });
   };
 
@@ -59,7 +91,7 @@ function App() {
       y: Math.min(startPos.y, boundedY),
       width,
       height,
-      color: activeSection === "left" ? "black" : "green",
+      color: activeSection === "left" ? "maroon" : "darkblue",
     });
   };
 
@@ -210,7 +242,7 @@ function App() {
           ...shape,
           x: bestPosition.x,
           y: bestPosition.y,
-          color: "blue", // Change color to blue when placed in left section
+          color: "darkblue", // Change color to blue when placed in left section
         };
 
         newLeftSectionShapes.push(newShape);
@@ -227,6 +259,27 @@ function App() {
     setRightSectionShapes([]);
   };
 
+  // Function to toggle grid visibility
+  const toggleGrid = () => {
+    setShowGrid(!showGrid);
+  };
+
+  // Function to toggle column snap
+  const toggleColumnSnap = () => {
+    setColumnSnap(!columnSnap);
+  };
+
+  // Function to export layout (placeholder)
+  const exportLayout = () => {
+    console.log("Export layout", {
+      leftSectionShapes,
+      rightSectionShapes,
+      gridWidth,
+      gridHeight,
+    });
+    alert("Layout export functionality would go here");
+  };
+
   // Render shapes for a section
   const renderShapes = (shapes, temporaryShape) => {
     return (
@@ -241,6 +294,7 @@ function App() {
               width: `${shape.width * gridSize}px`,
               height: `${shape.height * gridSize}px`,
               backgroundColor: shape.color,
+              border: `2px dashed rgba(255, 255, 255, 0.7)`,
             }}
           />
         ))}
@@ -254,6 +308,7 @@ function App() {
               height: `${temporaryShape.height * gridSize}px`,
               backgroundColor: temporaryShape.color,
               opacity: 0.7,
+              border: `2px dashed rgba(255, 255, 255, 0.7)`,
             }}
           />
         )}
@@ -262,15 +317,20 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <h1>Rectangle Optimization Tool</h1>
+    <div className="container" ref={containerRef}>
+      <h1>Pagination Tool</h1>
 
       <div className="grid-container">
         <div className="section">
-          <h2>Left Section (Input)</h2>
+          <h2>Left Canvas (Ads + Stories)</h2>
           <div
             ref={leftSectionRef}
             className="grid"
+            style={{
+              width: `${gridWidth * gridSize}px`,
+              height: `${gridHeight * gridSize}px`,
+              backgroundColor: "#1e1e1e",
+            }}
             onMouseDown={(e) => handleMouseDown(e, "left")}
             onMouseMove={
               isDrawing && activeSection === "left"
@@ -280,22 +340,24 @@ function App() {
             onMouseLeave={handleMouseLeave}
           >
             {/* Grid lines */}
-            <div className="grid-lines">
-              {Array.from({ length: gridWidth + 1 }).map((_, i) => (
-                <div
-                  key={`v-${i}`}
-                  className="grid-line vertical"
-                  style={{ left: `${i * gridSize}px` }}
-                />
-              ))}
-              {Array.from({ length: gridHeight + 1 }).map((_, i) => (
-                <div
-                  key={`h-${i}`}
-                  className="grid-line horizontal"
-                  style={{ top: `${i * gridSize}px` }}
-                />
-              ))}
-            </div>
+            {showGrid && (
+              <div className="grid-lines">
+                {Array.from({ length: gridWidth + 1 }).map((_, i) => (
+                  <div
+                    key={`v-${i}`}
+                    className="grid-line vertical"
+                    style={{ left: `${i * gridSize}px` }}
+                  />
+                ))}
+                {Array.from({ length: gridHeight + 1 }).map((_, i) => (
+                  <div
+                    key={`h-${i}`}
+                    className="grid-line horizontal"
+                    style={{ top: `${i * gridSize}px` }}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* Shapes */}
             {renderShapes(
@@ -306,10 +368,15 @@ function App() {
         </div>
 
         <div className="section">
-          <h2>Right Section (Input)</h2>
+          <h2>Input Canvas (Stories)</h2>
           <div
             ref={rightSectionRef}
             className="grid"
+            style={{
+              width: `${gridWidth * gridSize}px`,
+              height: `${gridHeight * gridSize}px`,
+              backgroundColor: "#1e1e1e",
+            }}
             onMouseDown={(e) => handleMouseDown(e, "right")}
             onMouseMove={
               isDrawing && activeSection === "right"
@@ -319,22 +386,24 @@ function App() {
             onMouseLeave={handleMouseLeave}
           >
             {/* Grid lines */}
-            <div className="grid-lines">
-              {Array.from({ length: gridWidth + 1 }).map((_, i) => (
-                <div
-                  key={`v-${i}`}
-                  className="grid-line vertical"
-                  style={{ left: `${i * gridSize}px` }}
-                />
-              ))}
-              {Array.from({ length: gridHeight + 1 }).map((_, i) => (
-                <div
-                  key={`h-${i}`}
-                  className="grid-line horizontal"
-                  style={{ top: `${i * gridSize}px` }}
-                />
-              ))}
-            </div>
+            {showGrid && (
+              <div className="grid-lines">
+                {Array.from({ length: gridWidth + 1 }).map((_, i) => (
+                  <div
+                    key={`v-${i}`}
+                    className="grid-line vertical"
+                    style={{ left: `${i * gridSize}px` }}
+                  />
+                ))}
+                {Array.from({ length: gridHeight + 1 }).map((_, i) => (
+                  <div
+                    key={`h-${i}`}
+                    className="grid-line horizontal"
+                    style={{ top: `${i * gridSize}px` }}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* Shapes */}
             {renderShapes(
@@ -345,39 +414,37 @@ function App() {
         </div>
       </div>
 
-      <div className="buttons">
-        <button onClick={autoPositionShapes}>Auto Position</button>
-        <button onClick={clearShapes}>Clear All</button>
-        <div className="legend">
-          <div className="legend-item">
-            <div className="color-box black"></div>
-            <span>Locked Shapes (Left)</span>
-          </div>
-          <div className="legend-item">
-            <div className="color-box green"></div>
-            <span>Movable Shapes (Right)</span>
-          </div>
-          <div className="legend-item">
-            <div className="color-box blue"></div>
-            <span>Positioned Shapes</span>
-          </div>
-        </div>
+      <div className="button-container">
+        <button className="action-button" onClick={autoPositionShapes}>
+          Auto-Place News Blocks
+        </button>
+        <button className="action-button" onClick={clearShapes}>
+          Clear All
+        </button>
+        <button className="action-button" onClick={toggleGrid}>
+          {showGrid ? "Hide Grid" : "Show Grid"}
+        </button>
+        <button className="action-button" onClick={toggleColumnSnap}>
+          {columnSnap ? "Disable Column Snap" : "Enable Column Snap"}
+        </button>
+        <button className="action-button" onClick={exportLayout}>
+          Export Layout
+        </button>
       </div>
 
-      <div className="instructions">
-        <h3>How to use:</h3>
-        <ol>
-          <li>
-            Draw black (locked) shapes in the left section by clicking and
-            dragging
-          </li>
-          <li>Draw green (movable) shapes in the right section</li>
-          <li>
-            Click "Auto Position" to optimize the placement of green shapes into
-            the left section
-          </li>
-          <li>Click "Clear All" to reset both sections</li>
-        </ol>
+      <div className="legend">
+        <div className="legend-item">
+          <div className="color-box maroon"></div>
+          <span>Locked Shapes (Left)</span>
+        </div>
+        <div className="legend-item">
+          <div className="color-box darkblue"></div>
+          <span>Movable Shapes (Right)</span>
+        </div>
+        <div className="legend-item">
+          <div className="color-box blue"></div>
+          <span>Positioned Shapes</span>
+        </div>
       </div>
     </div>
   );
