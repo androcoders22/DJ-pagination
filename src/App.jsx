@@ -269,17 +269,6 @@ function App() {
     setColumnSnap(!columnSnap);
   };
 
-  // Function to export layout (placeholder)
-  const exportLayout = () => {
-    console.log("Export layout", {
-      leftSectionShapes,
-      rightSectionShapes,
-      gridWidth,
-      gridHeight,
-    });
-    alert("Layout export functionality would go here");
-  };
-
   // Render shapes for a section
   const renderShapes = (shapes, temporaryShape) => {
     return (
@@ -415,6 +404,44 @@ function App() {
       </div>
 
       <div className="button-container">
+        <button
+          className="action-button"
+          onClick={() => {
+            const leftSectionData = JSON.stringify(
+              leftSectionShapes.map(({ x, y, width, height }) => ({
+                x,
+                y,
+                width,
+                height,
+              })),
+              null,
+              2
+            );
+            console.log("Left Section Data:", leftSectionData);
+            alert("Left Section JSON exported to console.");
+          }}
+        >
+          Export Left Section to JSON
+        </button>
+        <button
+          className="action-button"
+          onClick={() => {
+            const rightSectionData = JSON.stringify(
+              rightSectionShapes.map(({ x, y, width, height }) => ({
+                x,
+                y,
+                width,
+                height,
+              })),
+              null,
+              2
+            );
+            console.log("Right Section Data:", rightSectionData);
+            alert("Right Section JSON exported to console.");
+          }}
+        >
+          Export Right Section to JSON
+        </button>
         <button className="action-button" onClick={autoPositionShapes}>
           Auto-Place News Blocks
         </button>
@@ -424,12 +451,6 @@ function App() {
         <button className="action-button" onClick={toggleGrid}>
           {showGrid ? "Hide Grid" : "Show Grid"}
         </button>
-        {/* <button className="action-button" onClick={toggleColumnSnap}>
-          {columnSnap ? "Disable Column Snap" : "Enable Column Snap"}
-        </button> */}
-        <button className="action-button" onClick={exportLayout}>
-          Export Layout
-        </button>
       </div>
 
       <div className="legend">
@@ -438,12 +459,8 @@ function App() {
           <span>Locked Shapes (Left)</span>
         </div>
         <div className="legend-item">
-          <div className="color-box darkblue"></div>
-          <span>Movable Shapes (Right)</span>
-        </div>
-        <div className="legend-item">
           <div className="color-box blue"></div>
-          <span>Positioned Shapes</span>
+          <span>Stories (Right) </span>
         </div>
       </div>
     </div>
