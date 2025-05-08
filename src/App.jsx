@@ -404,7 +404,7 @@ function App() {
       </div>
 
       <div className="button-container">
-        <button
+        {/* <button
           className="action-button"
           onClick={() => {
             const leftSectionData = JSON.stringify(
@@ -441,7 +441,7 @@ function App() {
           }}
         >
           Export Right Section to JSON
-        </button>
+        </button> */}
         <button className="action-button" onClick={autoPositionShapes}>
           Auto-Place News Blocks
         </button>
