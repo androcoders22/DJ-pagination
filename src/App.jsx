@@ -424,9 +424,9 @@ function App() {
         <button className="action-button" onClick={toggleGrid}>
           {showGrid ? "Hide Grid" : "Show Grid"}
         </button>
-        <button className="action-button" onClick={toggleColumnSnap}>
+        {/* <button className="action-button" onClick={toggleColumnSnap}>
           {columnSnap ? "Disable Column Snap" : "Enable Column Snap"}
-        </button>
+        </button> */}
         <button className="action-button" onClick={exportLayout}>
           Export Layout
         </button>
