@@ -232,25 +232,31 @@ function App() {
     const shapesToPosition = [...rightSectionShapes].sort(
       (a, b) => b.width * b.height - a.width * a.height
     );
+    const unplacedShapes = [];
 
     // Try to position each shape from the right section
     for (const shape of shapesToPosition) {
       const bestPosition = findBestPosition(shape, newLeftSectionShapes);
-
       if (bestPosition) {
         const newShape = {
           ...shape,
           x: bestPosition.x,
           y: bestPosition.y,
-          color: "lightyellow", // Change color to pastel yellow when placed in left section
+          color: "lightyellow",
         };
-
         newLeftSectionShapes.push(newShape);
+      } else {
+        unplacedShapes.push(shape);
       }
     }
 
     setLeftSectionShapes(newLeftSectionShapes);
-    setRightSectionShapes([]); // Clear right section after positioning
+    setRightSectionShapes(unplacedShapes); // Keep unplaced shapes in right section
+    if (unplacedShapes.length > 0) {
+      alert(
+        `${unplacedShapes.length} block(s) couldn't be placed due to overlapping.`
+      );
+    }
   };
 
   // Function to clear all shapes
