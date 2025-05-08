@@ -177,15 +177,15 @@ h2 {
 }
 
 .color-box.maroon {
-  background-color: maroon;
+  background-color: lightcoral;
 }
 
 .color-box.darkblue {
-  background-color: darkblue;
+  background-color: lightblue;
 }
 
 .color-box.blue {
-  background-color: blue;
+  background-color: lightyellow;
 }
 
 /* Media query for smaller screens */

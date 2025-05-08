@@ -65,7 +65,7 @@ function App() {
       y,
       width: 1,
       height: 1,
-      color: section === "left" ? "maroon" : "darkblue",
+      color: section === "left" ? "lightcoral" : "lightyellow",
     });
   };
 
@@ -91,7 +91,7 @@ function App() {
       y: Math.min(startPos.y, boundedY),
       width,
       height,
-      color: activeSection === "left" ? "maroon" : "darkblue",
+      color: activeSection === "left" ? "lightcoral" : "lightyellow",
     });
   };
 
@@ -242,7 +242,7 @@ function App() {
           ...shape,
           x: bestPosition.x,
           y: bestPosition.y,
-          color: "darkblue", // Change color to blue when placed in left section
+          color: "lightyellow", // Change color to pastel yellow when placed in left section
         };
 
         newLeftSectionShapes.push(newShape);
