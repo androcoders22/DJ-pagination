@@ -132,8 +132,8 @@ h2 {
   position: absolute;
   top: 5px;
   left: 5px;
-  background-color: rgba(169, 215, 255, 0.8);
-  color: black;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
   padding: 1px 4px;
   font-size: 12px;
   border-radius: 2px;

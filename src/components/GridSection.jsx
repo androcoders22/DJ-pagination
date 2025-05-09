@@ -41,7 +41,7 @@ const GridSection = ({
             <div className="grid-dimensions">
               {shape.width}×{shape.height}
             </div>
-            <div
+            {/* <div
               className="shape-close"
               onClick={(e) => {
                 e.stopPropagation(); // Prevent grid click
@@ -55,7 +55,7 @@ const GridSection = ({
               }}
             >
               ×
-            </div>
+            </div> */}
           </div>
         ))}
         {temporaryShape && (
