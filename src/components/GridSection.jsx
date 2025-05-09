@@ -38,7 +38,7 @@ const GridSection = ({
               border: `2px dashed rgba(255, 255, 255, 0.7)`,
             }}
           >
-            <div
+            {/* <div
               className="shape-close"
               onClick={(e) => {
                 e.stopPropagation(); // Prevent grid click
@@ -52,7 +52,7 @@ const GridSection = ({
               }}
             >
               ×
-            </div>
+            </div> */}
           </div>
         ))}
         {temporaryShape && (
@@ -77,7 +77,7 @@ const GridSection = ({
     <div className="section">
       <div className="section-header">
         <h2>{title}</h2>
-        <div className="history-controls">
+        {/* <div className="history-controls">
           <button
             className="history-btn undo-btn"
             onClick={handleUndo}
@@ -94,7 +94,7 @@ const GridSection = ({
           >
             ↪ Redo
           </button>
-        </div>
+        </div> */}
       </div>
       <div
         ref={gridRef}

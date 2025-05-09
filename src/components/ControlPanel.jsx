@@ -11,11 +11,11 @@ const ControlPanel = ({
 }) => {
   return (
     <div className="button-container">
-      <button className="action-button" onClick={handleExportAll}>
-        Export All Data to JSON
-      </button>
       <button className="action-button" onClick={autoPositionShapes}>
-        Auto-Place News Blocks
+        Auto-Position Shapes
+      </button>
+      <button className="action-button" onClick={handleExportAll}>
+        Export Coordinates
       </button>
       <button className="action-button" onClick={clearShapes}>
         Clear All
