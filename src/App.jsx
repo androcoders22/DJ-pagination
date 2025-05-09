@@ -6,10 +6,10 @@ import Legend from "./components/Legend";
 import { findBestPosition } from "./utils/gridHelpers";
 
 function App() {
-  // State for dynamic grid configuration
+  // State for grid configuration with fixed dimensions
   const [gridSize, setGridSize] = useState(20); // Size of each grid cell in pixels
-  const [gridWidth, setGridWidth] = useState(30); // Number of columns
-  const [gridHeight, setGridHeight] = useState(20); // Number of rows
+  const [gridWidth, setGridWidth] = useState(40); // Fixed number of columns
+  const [gridHeight, setGridHeight] = useState(30); // Fixed number of rows
   const [showGrid, setShowGrid] = useState(true);
   const [columnSnap, setColumnSnap] = useState(true);
 
@@ -32,35 +32,6 @@ function App() {
   const leftSectionRef = useRef(null);
   const rightSectionRef = useRef(null);
   const containerRef = useRef(null);
-
-  // Update grid dimensions based on viewport size
-  useEffect(() => {
-    const updateGridDimensions = () => {
-      if (containerRef.current) {
-        const containerWidth = window.innerWidth * 0.9;
-        const containerHeight = window.innerHeight * 0.6;
-
-        // Each section gets half the width minus padding
-        const sectionWidth = containerWidth / 2 - 40;
-
-        // Calculate grid dimensions based on available space
-        const newGridSize = Math.floor(Math.min(20, sectionWidth / 30));
-        const newGridWidth = Math.floor(sectionWidth / newGridSize);
-        const newGridHeight = Math.floor(containerHeight / newGridSize);
-
-        setGridSize(newGridSize);
-        setGridWidth(newGridWidth);
-        setGridHeight(newGridHeight);
-      }
-    };
-
-    updateGridDimensions();
-    window.addEventListener("resize", updateGridDimensions);
-
-    return () => {
-      window.removeEventListener("resize", updateGridDimensions);
-    };
-  }, []);
 
   // Handle mouse down to start drawing
   const handleMouseDown = (e, section) => {
@@ -284,7 +255,7 @@ function App() {
 
     setLeftSectionShapes([]);
     setRightSectionShapes([]);
-    
+
     // Reset all history states when clearing all shapes
     setLeftSectionHistory([]);
     setLeftSectionRedoHistory([]);
@@ -347,8 +318,6 @@ function App() {
 
   return (
     <div className="container" ref={containerRef}>
-      <h1>Pagination Tool</h1>
-
       <div className="grid-container">
         <GridSection
           title="Output Canvas (Ads + Stories)"

@@ -38,7 +38,10 @@ const GridSection = ({
               border: `2px dashed rgba(255, 255, 255, 0.7)`,
             }}
           >
-            {/* <div
+            <div className="grid-dimensions">
+              {shape.width}×{shape.height}
+            </div>
+            <div
               className="shape-close"
               onClick={(e) => {
                 e.stopPropagation(); // Prevent grid click
@@ -52,7 +55,7 @@ const GridSection = ({
               }}
             >
               ×
-            </div> */}
+            </div>
           </div>
         ))}
         {temporaryShape && (
@@ -67,7 +70,11 @@ const GridSection = ({
               opacity: 0.7,
               border: `2px dashed rgba(255, 255, 255, 0.7)`,
             }}
-          />
+          >
+            <div className="grid-dimensions">
+              {temporaryShape.width}×{temporaryShape.height}
+            </div>
+          </div>
         )}
       </>
     );

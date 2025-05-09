@@ -1,7 +1,7 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
 }
 
@@ -126,6 +126,19 @@ h2 {
   background-color: #1e1e1e;
   overflow: hidden;
   cursor: crosshair;
+}
+
+.grid-dimensions {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: rgba(169, 215, 255, 0.8);
+  color: black;
+  padding: 1px 4px;
+  font-size: 12px;
+  border-radius: 2px;
+  z-index: 10;
+  pointer-events: none;
 }
 
 .grid-lines {
