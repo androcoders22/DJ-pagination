@@ -39,11 +39,7 @@ const ExportedData = ({
 
       return () => clearTimeout(timer);
     }
-  }, [
-    showExportedData,
-    leftSectionShapes,
-    rightSectionShapes,
-  ]);
+  }, [showExportedData, leftSectionShapes, rightSectionShapes]);
 
   // Reset the component state if shapes change
   useEffect(() => {
@@ -64,7 +60,7 @@ const ExportedData = ({
 
   return (
     <div className="shape-analysis full-width">
-      <h2 className="analysis-title">Step 2: Exported Shape Data</h2>
+      <h2 className="analysis-title">Geometric-Data of Shapes</h2>
 
       <div className="analysis-results">
         {loading ? (
@@ -76,31 +72,8 @@ const ExportedData = ({
           </div>
         ) : exportedData ? (
           <div className="results-container">
-            <div className="three-column-layout">
+            <div className="two-column-layout">
               {/* First Column - Summary */}
-              <div className="summary-column">
-                <div className="stat-item">
-                  <span className="stat-label">Total Shapes:</span>
-                  <span className="stat-value">
-                    {exportedData.leftSection.length +
-                      exportedData.rightSection.length}
-                  </span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Left Section Shapes:</span>
-                  <span className="stat-value">
-                    {exportedData.leftSection.length}
-                  </span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Right Section Shapes:</span>
-                  <span className="stat-value">
-                    {exportedData.rightSection.length}
-                  </span>
-                </div>
-              </div>
-              
-              {/* Second Column - Left Section Shapes */}
               <div className="shapes-column">
                 <h3 className="column-title">
                   Left Section Shapes ({exportedData.leftSection.length} shapes)
@@ -111,7 +84,8 @@ const ExportedData = ({
                       <div key={index} className="shape-item">
                         <span className="shape-index">Shape {index + 1}:</span>
                         <span className="shape-details">
-                          x:{shape.x}, y:{shape.y}, w:{shape.width}, h:{shape.height}
+                          x:{shape.x}, y:{shape.y}, w:{shape.width}, h:
+                          {shape.height}
                         </span>
                       </div>
                     ))
@@ -120,11 +94,12 @@ const ExportedData = ({
                   )}
                 </div>
               </div>
-              
-              {/* Third Column - Right Section Shapes */}
+
+              {/* Second Column - Left Section Shapes */}
               <div className="shapes-column">
                 <h3 className="column-title">
-                  Right Section Shapes ({exportedData.rightSection.length} shapes)
+                  Right Section Shapes ({exportedData.rightSection.length}{" "}
+                  shapes)
                 </h3>
                 <div className="shapes-list">
                   {exportedData.rightSection.length > 0 ? (
@@ -132,7 +107,8 @@ const ExportedData = ({
                       <div key={index} className="shape-item">
                         <span className="shape-index">Shape {index + 1}:</span>
                         <span className="shape-details">
-                          x:{shape.x}, y:{shape.y}, w:{shape.width}, h:{shape.height}
+                          x:{shape.x}, y:{shape.y}, w:{shape.width}, h:
+                          {shape.height}
                         </span>
                       </div>
                     ))
@@ -142,11 +118,11 @@ const ExportedData = ({
                 </div>
               </div>
             </div>
-            
+
             <div className="analysis-button-container">
-              <button className="analysis-button" onClick={handleStartAnalysis}>
+              {/* <button className="analysis-button" onClick={handleStartAnalysis}>
                 Begin AI Analysis (Step 3)
-              </button>
+              </button> */}
             </div>
           </div>
         ) : null}

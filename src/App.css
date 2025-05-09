@@ -407,7 +407,7 @@ h2 {
 }
 
 /* Three Column Layout for Step 2 */
-.three-column-layout {
+.two-column-layout {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
@@ -564,7 +564,7 @@ h2 {
 
 /* Media Queries for Responsive Design */
 @media (max-width: 900px) {
-  .three-column-layout {
+  .two-column-layout {
     flex-direction: column;
   }
 
