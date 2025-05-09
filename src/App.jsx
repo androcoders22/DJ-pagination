@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
+import GridSection from "./components/GridSection";
+import ControlPanel from "./components/ControlPanel";
+import Legend from "./components/Legend";
+import { findBestPosition } from "./utils/gridHelpers";
 
 function App() {
   // State for dynamic grid configuration
@@ -140,91 +144,6 @@ function App() {
     rightSectionShapes,
   ]);
 
-  // Function to check if two rectangles overlap
-  const doRectanglesOverlap = (rect1, rect2) => {
-    return (
-      rect1.x < rect2.x + rect2.width &&
-      rect1.x + rect1.width > rect2.x &&
-      rect1.y < rect2.y + rect2.height &&
-      rect1.y + rect1.height > rect2.y
-    );
-  };
-
-  // Function to check if a position is valid
-  const isPositionValid = (shape, existingShapes) => {
-    // Check if shape is within grid boundaries
-    if (
-      shape.x < 0 ||
-      shape.y < 0 ||
-      shape.x + shape.width > gridWidth ||
-      shape.y + shape.height > gridHeight
-    ) {
-      return false;
-    }
-
-    // Check if shape overlaps with any existing shape
-    return !existingShapes.some((existing) =>
-      doRectanglesOverlap(shape, existing)
-    );
-  };
-
-  // Function to create a grid occupancy map
-  const createOccupancyMap = (shapes) => {
-    // Initialize a 2D array representing the grid
-    const grid = Array(gridHeight)
-      .fill()
-      .map(() => Array(gridWidth).fill(false));
-
-    // Mark cells as occupied where shapes exist
-    shapes.forEach((shape) => {
-      for (let y = shape.y; y < shape.y + shape.height; y++) {
-        for (let x = shape.x; x < shape.x + shape.width; x++) {
-          if (y >= 0 && y < gridHeight && x >= 0 && x < gridWidth) {
-            grid[y][x] = true;
-          }
-        }
-      }
-    });
-
-    return grid;
-  };
-
-  // Function to find the best position for a shape
-  const findBestPosition = (shape, existingShapes) => {
-    const occupancyMap = createOccupancyMap(existingShapes);
-    let bestPosition = null;
-    let bestScore = Infinity;
-
-    // Try each possible position in the grid
-    for (let y = 0; y <= gridHeight - shape.height; y++) {
-      for (let x = 0; x <= gridWidth - shape.width; x++) {
-        // Check if this position is valid
-        let isValid = true;
-
-        // Check if all cells required by the shape are free
-        for (let dy = 0; dy < shape.height && isValid; dy++) {
-          for (let dx = 0; dx < shape.width && isValid; dx++) {
-            if (occupancyMap[y + dy][x + dx]) {
-              isValid = false;
-            }
-          }
-        }
-
-        if (isValid) {
-          // Score this position (prefer positions closer to top-left)
-          const score = y * 100 + x; // Prioritize top positions over left positions
-
-          if (score < bestScore) {
-            bestScore = score;
-            bestPosition = { x, y };
-          }
-        }
-      }
-    }
-
-    return bestPosition;
-  };
-
   // Function to automatically position shapes from right to left section
   const autoPositionShapes = () => {
     let newLeftSectionShapes = [...leftSectionShapes];
@@ -236,7 +155,12 @@ function App() {
 
     // Try to position each shape from the right section
     for (const shape of shapesToPosition) {
-      const bestPosition = findBestPosition(shape, newLeftSectionShapes);
+      const bestPosition = findBestPosition(
+        shape,
+        newLeftSectionShapes,
+        gridWidth,
+        gridHeight
+      );
       if (bestPosition) {
         const newShape = {
           ...shape,
@@ -275,200 +199,56 @@ function App() {
     setColumnSnap(!columnSnap);
   };
 
-  // Render shapes for a section
-  const renderShapes = (shapes, temporaryShape) => {
-    return (
-      <>
-        {shapes.map((shape, index) => (
-          <div
-            key={index}
-            className="shape"
-            style={{
-              left: `${shape.x * gridSize}px`,
-              top: `${shape.y * gridSize}px`,
-              width: `${shape.width * gridSize}px`,
-              height: `${shape.height * gridSize}px`,
-              backgroundColor: shape.color,
-              border: `2px dashed rgba(255, 255, 255, 0.7)`,
-            }}
-          />
-        ))}
-        {temporaryShape && (
-          <div
-            className="shape current"
-            style={{
-              left: `${temporaryShape.x * gridSize}px`,
-              top: `${temporaryShape.y * gridSize}px`,
-              width: `${temporaryShape.width * gridSize}px`,
-              height: `${temporaryShape.height * gridSize}px`,
-              backgroundColor: temporaryShape.color,
-              opacity: 0.7,
-              border: `2px dashed rgba(255, 255, 255, 0.7)`,
-            }}
-          />
-        )}
-      </>
-    );
-  };
-
   return (
     <div className="container" ref={containerRef}>
       <h1>Pagination Tool</h1>
 
       <div className="grid-container">
-        <div className="section">
-          <h2>Output Canvas (Ads + Stories)</h2>
-          <div
-            ref={leftSectionRef}
-            className="grid"
-            style={{
-              width: `${gridWidth * gridSize}px`,
-              height: `${gridHeight * gridSize}px`,
-              backgroundColor: "#1e1e1e",
-            }}
-            onMouseDown={(e) => handleMouseDown(e, "left")}
-            onMouseMove={
-              isDrawing && activeSection === "left"
-                ? handleMouseMove
-                : undefined
-            }
-            onMouseLeave={handleMouseLeave}
-          >
-            {/* Grid lines */}
-            {showGrid && (
-              <div className="grid-lines">
-                {Array.from({ length: gridWidth + 1 }).map((_, i) => (
-                  <div
-                    key={`v-${i}`}
-                    className="grid-line vertical"
-                    style={{ left: `${i * gridSize}px` }}
-                  />
-                ))}
-                {Array.from({ length: gridHeight + 1 }).map((_, i) => (
-                  <div
-                    key={`h-${i}`}
-                    className="grid-line horizontal"
-                    style={{ top: `${i * gridSize}px` }}
-                  />
-                ))}
-              </div>
-            )}
+        <GridSection
+          title="Output Canvas (Ads + Stories)"
+          gridRef={leftSectionRef}
+          gridSize={gridSize}
+          gridWidth={gridWidth}
+          gridHeight={gridHeight}
+          showGrid={showGrid}
+          handleMouseDown={handleMouseDown}
+          handleMouseMove={handleMouseMove}
+          isDrawing={isDrawing}
+          activeSection={activeSection}
+          handleMouseLeave={handleMouseLeave}
+          sectionType="left"
+          shapes={leftSectionShapes}
+          currentShape={currentShape}
+        />
 
-            {/* Shapes */}
-            {renderShapes(
-              leftSectionShapes,
-              activeSection === "left" ? currentShape : null
-            )}
-          </div>
-        </div>
-
-        <div className="section">
-          <h2>Input Canvas (Stories)</h2>
-          <div
-            ref={rightSectionRef}
-            className="grid"
-            style={{
-              width: `${gridWidth * gridSize}px`,
-              height: `${gridHeight * gridSize}px`,
-              backgroundColor: "#1e1e1e",
-            }}
-            onMouseDown={(e) => handleMouseDown(e, "right")}
-            onMouseMove={
-              isDrawing && activeSection === "right"
-                ? handleMouseMove
-                : undefined
-            }
-            onMouseLeave={handleMouseLeave}
-          >
-            {/* Grid lines */}
-            {showGrid && (
-              <div className="grid-lines">
-                {Array.from({ length: gridWidth + 1 }).map((_, i) => (
-                  <div
-                    key={`v-${i}`}
-                    className="grid-line vertical"
-                    style={{ left: `${i * gridSize}px` }}
-                  />
-                ))}
-                {Array.from({ length: gridHeight + 1 }).map((_, i) => (
-                  <div
-                    key={`h-${i}`}
-                    className="grid-line horizontal"
-                    style={{ top: `${i * gridSize}px` }}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Shapes */}
-            {renderShapes(
-              rightSectionShapes,
-              activeSection === "right" ? currentShape : null
-            )}
-          </div>
-        </div>
+        <GridSection
+          title="Input Canvas (Stories)"
+          gridRef={rightSectionRef}
+          gridSize={gridSize}
+          gridWidth={gridWidth}
+          gridHeight={gridHeight}
+          showGrid={showGrid}
+          handleMouseDown={handleMouseDown}
+          handleMouseMove={handleMouseMove}
+          isDrawing={isDrawing}
+          activeSection={activeSection}
+          handleMouseLeave={handleMouseLeave}
+          sectionType="right"
+          shapes={rightSectionShapes}
+          currentShape={currentShape}
+        />
       </div>
 
-      <div className="button-container">
-        {/* <button
-          className="action-button"
-          onClick={() => {
-            const leftSectionData = JSON.stringify(
-              leftSectionShapes.map(({ x, y, width, height }) => ({
-                x,
-                y,
-                width,
-                height,
-              })),
-              null,
-              2
-            );
-            console.log("Left Section Data:", leftSectionData);
-            alert("Left Section JSON exported to console.");
-          }}
-        >
-          Export Left Section to JSON
-        </button>
-        <button
-          className="action-button"
-          onClick={() => {
-            const rightSectionData = JSON.stringify(
-              rightSectionShapes.map(({ x, y, width, height }) => ({
-                x,
-                y,
-                width,
-                height,
-              })),
-              null,
-              2
-            );
-            console.log("Right Section Data:", rightSectionData);
-            alert("Right Section JSON exported to console.");
-          }}
-        >
-          Export Right Section to JSON
-        </button> */}
-        <button className="action-button" onClick={autoPositionShapes}>
-          Auto-Place News Blocks
-        </button>
-        <button className="action-button" onClick={clearShapes}>
-          Clear All
-        </button>
-        <button className="action-button" onClick={toggleGrid}>
-          {showGrid ? "Hide Grid" : "Show Grid"}
-        </button>
-      </div>
+      <ControlPanel
+        leftSectionShapes={leftSectionShapes}
+        rightSectionShapes={rightSectionShapes}
+        autoPositionShapes={autoPositionShapes}
+        clearShapes={clearShapes}
+        toggleGrid={toggleGrid}
+        showGrid={showGrid}
+      />
 
-      <div className="legend">
-        <div className="legend-item">
-          <div className="color-box maroon"></div>
-          <span>Locked Shapes (Left)</span>
-        </div>
-        <div className="legend-item">
-          <div className="color-box blue"></div>
-          <span>Stories (Right) </span>
-        </div>
-      </div>
+      <Legend />
     </div>
   );
 }
