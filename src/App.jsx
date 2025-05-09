@@ -16,6 +16,13 @@ function App() {
   // State for tracking shapes
   const [leftSectionShapes, setLeftSectionShapes] = useState([]); // Black/locked shapes
   const [rightSectionShapes, setRightSectionShapes] = useState([]); // Green/movable shapes
+
+  // History states for undo/redo functionality
+  const [leftSectionHistory, setLeftSectionHistory] = useState([]);
+  const [leftSectionRedoHistory, setLeftSectionRedoHistory] = useState([]);
+  const [rightSectionHistory, setRightSectionHistory] = useState([]);
+  const [rightSectionRedoHistory, setRightSectionRedoHistory] = useState([]);
+
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentShape, setCurrentShape] = useState(null);
@@ -104,8 +111,14 @@ function App() {
     if (!isDrawing) return;
 
     if (activeSection === "left") {
+      // Save current state to history before updating
+      setLeftSectionHistory([...leftSectionHistory, [...leftSectionShapes]]);
+      setLeftSectionRedoHistory([]);
       setLeftSectionShapes([...leftSectionShapes, currentShape]);
     } else {
+      // Save current state to history before updating
+      setRightSectionHistory([...rightSectionHistory, [...rightSectionShapes]]);
+      setRightSectionRedoHistory([]);
       setRightSectionShapes([...rightSectionShapes, currentShape]);
     }
 
@@ -142,10 +155,84 @@ function App() {
     currentShape,
     leftSectionShapes,
     rightSectionShapes,
+    leftSectionHistory,
+    rightSectionHistory,
   ]);
+
+  // Undo/Redo functions for left section
+  const handleLeftUndo = () => {
+    if (leftSectionHistory.length > 0) {
+      const previousState = leftSectionHistory[leftSectionHistory.length - 1];
+      const newHistory = leftSectionHistory.slice(0, -1);
+
+      // Save current state to redo history
+      setLeftSectionRedoHistory([
+        ...leftSectionRedoHistory,
+        [...leftSectionShapes],
+      ]);
+
+      // Set shapes to previous state
+      setLeftSectionShapes(previousState);
+      setLeftSectionHistory(newHistory);
+    }
+  };
+
+  const handleLeftRedo = () => {
+    if (leftSectionRedoHistory.length > 0) {
+      const nextState =
+        leftSectionRedoHistory[leftSectionRedoHistory.length - 1];
+      const newRedoHistory = leftSectionRedoHistory.slice(0, -1);
+
+      // Save current state to undo history
+      setLeftSectionHistory([...leftSectionHistory, [...leftSectionShapes]]);
+
+      // Set shapes to next state
+      setLeftSectionShapes(nextState);
+      setLeftSectionRedoHistory(newRedoHistory);
+    }
+  };
+
+  // Undo/Redo functions for right section
+  const handleRightUndo = () => {
+    if (rightSectionHistory.length > 0) {
+      const previousState = rightSectionHistory[rightSectionHistory.length - 1];
+      const newHistory = rightSectionHistory.slice(0, -1);
+
+      // Save current state to redo history
+      setRightSectionRedoHistory([
+        ...rightSectionRedoHistory,
+        [...rightSectionShapes],
+      ]);
+
+      // Set shapes to previous state
+      setRightSectionShapes(previousState);
+      setRightSectionHistory(newHistory);
+    }
+  };
+
+  const handleRightRedo = () => {
+    if (rightSectionRedoHistory.length > 0) {
+      const nextState =
+        rightSectionRedoHistory[rightSectionRedoHistory.length - 1];
+      const newRedoHistory = rightSectionRedoHistory.slice(0, -1);
+
+      // Save current state to undo history
+      setRightSectionHistory([...rightSectionHistory, [...rightSectionShapes]]);
+
+      // Set shapes to next state
+      setRightSectionShapes(nextState);
+      setRightSectionRedoHistory(newRedoHistory);
+    }
+  };
 
   // Function to automatically position shapes from right to left section
   const autoPositionShapes = () => {
+    // Save current state to history before updating
+    setLeftSectionHistory([...leftSectionHistory, [...leftSectionShapes]]);
+    setLeftSectionRedoHistory([]);
+    setRightSectionHistory([...rightSectionHistory, [...rightSectionShapes]]);
+    setRightSectionRedoHistory([]);
+
     let newLeftSectionShapes = [...leftSectionShapes];
     // Sort shapes by area (largest first) to optimize placement
     const shapesToPosition = [...rightSectionShapes].sort(
@@ -185,6 +272,16 @@ function App() {
 
   // Function to clear all shapes
   const clearShapes = () => {
+    // Save current state to history before clearing
+    if (leftSectionShapes.length > 0) {
+      setLeftSectionHistory([...leftSectionHistory, [...leftSectionShapes]]);
+      setLeftSectionRedoHistory([]);
+    }
+    if (rightSectionShapes.length > 0) {
+      setRightSectionHistory([...rightSectionHistory, [...rightSectionShapes]]);
+      setRightSectionRedoHistory([]);
+    }
+
     setLeftSectionShapes([]);
     setRightSectionShapes([]);
   };
@@ -219,6 +316,10 @@ function App() {
           sectionType="left"
           shapes={leftSectionShapes}
           currentShape={currentShape}
+          handleUndo={handleLeftUndo}
+          handleRedo={handleLeftRedo}
+          canUndo={leftSectionHistory.length > 0}
+          canRedo={leftSectionRedoHistory.length > 0}
         />
 
         <GridSection
@@ -236,6 +337,10 @@ function App() {
           sectionType="right"
           shapes={rightSectionShapes}
           currentShape={currentShape}
+          handleUndo={handleRightUndo}
+          handleRedo={handleRightRedo}
+          canUndo={rightSectionHistory.length > 0}
+          canRedo={rightSectionRedoHistory.length > 0}
         />
       </div>
 

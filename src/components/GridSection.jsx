@@ -15,6 +15,10 @@ const GridSection = ({
   sectionType,
   shapes,
   currentShape,
+  handleUndo,
+  handleRedo,
+  canUndo,
+  canRedo,
 }) => {
   // Render shapes for a section
   const renderShapes = (shapes, temporaryShape) => {
@@ -54,7 +58,27 @@ const GridSection = ({
 
   return (
     <div className="section">
-      <h2>{title}</h2>
+      <div className="section-header">
+        <h2>{title}</h2>
+        <div className="history-controls">
+          <button
+            className="history-btn undo-btn"
+            onClick={handleUndo}
+            disabled={!canUndo}
+            title="Undo"
+          >
+            ↩ Undo
+          </button>
+          <button
+            className="history-btn redo-btn"
+            onClick={handleRedo}
+            disabled={!canRedo}
+            title="Redo"
+          >
+            ↪ Redo
+          </button>
+        </div>
+      </div>
       <div
         ref={gridRef}
         className="grid"

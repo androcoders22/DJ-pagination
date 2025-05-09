@@ -75,6 +75,44 @@ h1 {
   align-items: center;
 }
 
+.section-header {
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.history-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.history-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.history-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.undo-btn {
+  background-color: #4a90e2;
+}
+
+.redo-btn {
+  background-color: #5cb85c;
+}
+
+.history-btn:not(:disabled):hover {
+  filter: brightness(1.1);
+}
+
 h2 {
   margin-bottom: 0.5rem;
   color: rgba(255, 255, 255, 0.7);
