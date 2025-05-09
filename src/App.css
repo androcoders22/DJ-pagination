@@ -161,6 +161,26 @@ h2 {
   opacity: 0.7;
 }
 
+.shape-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 0 0 0 4px;
+  z-index: 10;
+}
+
+.shape-close:hover {
+  background-color: rgba(255, 0, 0, 0.7);
+}
+
 .button-container {
   display: flex;
   gap: 0.5rem;

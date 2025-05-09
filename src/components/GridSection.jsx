@@ -19,6 +19,7 @@ const GridSection = ({
   handleRedo,
   canUndo,
   canRedo,
+  handleDeleteShape,
 }) => {
   // Render shapes for a section
   const renderShapes = (shapes, temporaryShape) => {
@@ -36,7 +37,23 @@ const GridSection = ({
               backgroundColor: shape.color,
               border: `2px dashed rgba(255, 255, 255, 0.7)`,
             }}
-          />
+          >
+            <div
+              className="shape-close"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent grid click
+                e.preventDefault(); // Prevent default behavior
+                handleDeleteShape(sectionType, index);
+                return false; // Ensure event doesn't continue
+              }}
+              onMouseDown={(e) => {
+                e.stopPropagation(); // Prevent shape drawing on close button mousedown
+                e.preventDefault();
+              }}
+            >
+              ×
+            </div>
+          </div>
         ))}
         {temporaryShape && (
           <div

@@ -284,6 +284,55 @@ function App() {
 
     setLeftSectionShapes([]);
     setRightSectionShapes([]);
+    
+    // Reset all history states when clearing all shapes
+    setLeftSectionHistory([]);
+    setLeftSectionRedoHistory([]);
+    setRightSectionHistory([]);
+    setRightSectionRedoHistory([]);
+  };
+
+  // Function to delete a shape
+  const handleDeleteShape = (sectionType, index) => {
+    if (sectionType === "left") {
+      // Save current state to history before deleting
+      setLeftSectionHistory([...leftSectionHistory, [...leftSectionShapes]]);
+      setLeftSectionRedoHistory([]);
+
+      // Create a new array without the shape at index
+      const newShapes = [...leftSectionShapes];
+      newShapes.splice(index, 1);
+      setLeftSectionShapes(newShapes);
+    } else {
+      // Save current state to history before deleting
+      setRightSectionHistory([...rightSectionHistory, [...rightSectionShapes]]);
+      setRightSectionRedoHistory([]);
+
+      // Create a new array without the shape at index
+      const newShapes = [...rightSectionShapes];
+      newShapes.splice(index, 1);
+      setRightSectionShapes(newShapes);
+    }
+  };
+
+  // Function to export all data to JSON
+  const handleExportAll = () => {
+    const allData = {
+      leftSection: leftSectionShapes.map(({ x, y, width, height }) => ({
+        x,
+        y,
+        width,
+        height,
+      })),
+      rightSection: rightSectionShapes.map(({ x, y, width, height }) => ({
+        x,
+        y,
+        width,
+        height,
+      })),
+    };
+    console.log("Export Data:", JSON.stringify(allData, null, 2));
+    alert("All data exported to console as JSON.");
   };
 
   // Function to toggle grid visibility
@@ -320,6 +369,7 @@ function App() {
           handleRedo={handleLeftRedo}
           canUndo={leftSectionHistory.length > 0}
           canRedo={leftSectionRedoHistory.length > 0}
+          handleDeleteShape={handleDeleteShape}
         />
 
         <GridSection
@@ -341,6 +391,7 @@ function App() {
           handleRedo={handleRightRedo}
           canUndo={rightSectionHistory.length > 0}
           canRedo={rightSectionRedoHistory.length > 0}
+          handleDeleteShape={handleDeleteShape}
         />
       </div>
 
@@ -351,6 +402,7 @@ function App() {
         clearShapes={clearShapes}
         toggleGrid={toggleGrid}
         showGrid={showGrid}
+        handleExportAll={handleExportAll}
       />
 
       <Legend />

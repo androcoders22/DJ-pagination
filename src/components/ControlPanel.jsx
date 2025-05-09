@@ -7,46 +7,12 @@ const ControlPanel = ({
   clearShapes,
   toggleGrid,
   showGrid,
+  handleExportAll,
 }) => {
   return (
     <div className="button-container">
-      <button
-        className="action-button"
-        onClick={() => {
-          const leftSectionData = JSON.stringify(
-            leftSectionShapes.map(({ x, y, width, height }) => ({
-              x,
-              y,
-              width,
-              height,
-            })),
-            null,
-            2
-          );
-          console.log("Left Section Data:", leftSectionData);
-          alert("Left Section JSON exported to console.");
-        }}
-      >
-        Export Left Section to JSON
-      </button>
-      <button
-        className="action-button"
-        onClick={() => {
-          const rightSectionData = JSON.stringify(
-            rightSectionShapes.map(({ x, y, width, height }) => ({
-              x,
-              y,
-              width,
-              height,
-            })),
-            null,
-            2
-          );
-          console.log("Right Section Data:", rightSectionData);
-          alert("Right Section JSON exported to console.");
-        }}
-      >
-        Export Right Section to JSON
+      <button className="action-button" onClick={handleExportAll}>
+        Export All Data to JSON
       </button>
       <button className="action-button" onClick={autoPositionShapes}>
         Auto-Place News Blocks
