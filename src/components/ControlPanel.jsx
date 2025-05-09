@@ -11,9 +11,9 @@ const ControlPanel = ({
 }) => {
   return (
     <div className="button-container">
-      <button className="action-button" onClick={autoPositionShapes}>
+      {/* <button className="action-button" onClick={autoPositionShapes}>
         Auto-Position Shapes
-      </button>
+      </button> */}
       <button className="action-button" onClick={handleExportAll}>
         Export Coordinates
       </button>

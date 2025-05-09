@@ -3,6 +3,8 @@ import "./App.css";
 import GridSection from "./components/GridSection";
 import ControlPanel from "./components/ControlPanel";
 import Legend from "./components/Legend";
+import ExportedData from "./components/ExportedData";
+import AIAnalysis from "./components/AIAnalysis";
 import { findBestPosition } from "./utils/gridHelpers";
 
 function App() {
@@ -16,6 +18,11 @@ function App() {
   // State for tracking shapes
   const [leftSectionShapes, setLeftSectionShapes] = useState([]); // Black/locked shapes
   const [rightSectionShapes, setRightSectionShapes] = useState([]); // Green/movable shapes
+
+  // Step 2 and Step 3 states
+  const [showExportedData, setShowExportedData] = useState(false);
+  const [showAIAnalysis, setShowAIAnalysis] = useState(false);
+  const [exportedShapesData, setExportedShapesData] = useState(null);
 
   // History states for undo/redo functionality
   const [leftSectionHistory, setLeftSectionHistory] = useState([]);
@@ -256,6 +263,11 @@ function App() {
     setLeftSectionShapes([]);
     setRightSectionShapes([]);
 
+    // Reset step 2 and 3 states
+    setShowExportedData(false);
+    setShowAIAnalysis(false);
+    setExportedShapesData(null);
+
     // Reset all history states when clearing all shapes
     setLeftSectionHistory([]);
     setLeftSectionRedoHistory([]);
@@ -288,22 +300,34 @@ function App() {
 
   // Function to export all data to JSON
   const handleExportAll = () => {
-    const allData = {
-      leftSection: leftSectionShapes.map(({ x, y, width, height }) => ({
-        x,
-        y,
-        width,
-        height,
-      })),
-      rightSection: rightSectionShapes.map(({ x, y, width, height }) => ({
-        x,
-        y,
-        width,
-        height,
-      })),
-    };
-    console.log("Export Data:", JSON.stringify(allData, null, 2));
-    alert("All data exported to console as JSON.");
+    // Show the Step 2 component
+    setShowExportedData(true);
+
+    // Hide Step 3 if it's visible
+    setShowAIAnalysis(false);
+    setExportedShapesData(null);
+
+    // Scroll to the exported data section
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 100);
+  };
+
+  // Function to handle starting the AI analysis from Step 2
+  const handleStartAnalysis = (data) => {
+    setExportedShapesData(data);
+    setShowAIAnalysis(true);
+
+    // Scroll to the AI analysis section
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 100);
   };
 
   // Function to toggle grid visibility
@@ -315,6 +339,37 @@ function App() {
   const toggleColumnSnap = () => {
     setColumnSnap(!columnSnap);
   };
+
+  // Add CSS to customize the components' widths
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .full-width {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+      
+      .analysis-button-container {
+        margin-top: 2rem;
+        text-align: center;
+      }
+      
+      .error-message {
+        background-color: rgba(255, 80, 80, 0.1);
+        border: 1px solid #ff5050;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   return (
     <div className="container" ref={containerRef}>
@@ -375,6 +430,22 @@ function App() {
       />
 
       <Legend />
+
+      {/* Step 2: Display Exported Data with Loading Animation */}
+      <ExportedData
+        leftSectionShapes={leftSectionShapes}
+        rightSectionShapes={rightSectionShapes}
+        onStartAnalysis={handleStartAnalysis}
+        showExportedData={showExportedData}
+      />
+
+      {/* Step 3: AI Analysis with Loading Animation */}
+      {exportedShapesData && (
+        <AIAnalysis
+          shapesData={exportedShapesData}
+          showAIAnalysis={showAIAnalysis}
+        />
+      )}
     </div>
   );
 }

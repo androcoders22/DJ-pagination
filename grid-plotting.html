@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Box Grid Plotter</title>
+  <style>
+    body { margin:0; display:flex; justify-content:center; align-items:center; height:100vh; background:#f0f0f0; }
+    canvas { background:#fff; box-shadow:0 0 10px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+  <canvas id="gridCanvas"></canvas>
+  <script>
+    // --- Configuration ---
+    const gridW = 40, gridH = 30;       // grid size in units
+    const scale = 20;                   // pixels per unit
+    const canvas = document.getElementById('gridCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width  = gridW * scale;
+    canvas.height = gridH * scale;
+
+    // --- Your combined array of all boxes ---
+    const shapes = [
+  { "x": 0,  "y": 2,  "width": 7,  "height": 12 },
+  { "x": 0,  "y": 25, "width": 28, "height": 5  },
+  { "x": 34, "y": 4,  "width": 6,  "height": 17 },
+  { "x": 7,  "y": 0,  "width": 21, "height": 7  },
+  { "x": 28, "y": 0,  "width": 6,  "height": 11 },
+  { "x": 7,  "y": 7,  "width": 13, "height": 5  }
+]
+
+    // --- Draw grid ---
+    function drawGrid() {
+      ctx.strokeStyle = '#ddd';
+      ctx.lineWidth = 1;
+      // vertical lines
+      for(let i=0; i<=gridW; i++){
+        const x = i * scale;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      // horizontal lines
+      for(let j=0; j<=gridH; j++){
+        const y = j * scale;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    }
+
+    // --- Draw boxes ---
+    function drawShapes() {
+      shapes.forEach((r, idx) => {
+        // color leftSection vs rightSection by index threshold (3 left, 3 right)
+        ctx.fillStyle = idx < 3 ? 'rgba(100,149,237,0.5)' : 'rgba(240,128,128,0.5)';
+        ctx.strokeStyle = idx < 3 ? 'cornflowerblue' : 'indianred';
+        ctx.lineWidth = 2;
+        const px = r.x * scale;
+        const py = r.y * scale;
+        const pw = r.width * scale;
+        const ph = r.height * scale;
+        ctx.fillRect(px, py, pw, ph);
+        ctx.strokeRect(px, py, pw, ph);
+
+        // label
+        ctx.fillStyle = '#000';
+        ctx.font = `${12}px sans-serif`;
+        ctx.fillText(`${r.width}×${r.height}`, px + 4, py + 14);
+      });
+    }
+
+    drawGrid();
+    drawShapes();
+  </script>
+</body>
+</html>
