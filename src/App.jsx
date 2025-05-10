@@ -13,7 +13,6 @@ function App() {
   const [gridWidth, setGridWidth] = useState(40); // Fixed number of columns
   const [gridHeight, setGridHeight] = useState(30); // Fixed number of rows
   const [showGrid, setShowGrid] = useState(true);
-  const [columnSnap, setColumnSnap] = useState(true);
 
   // State for tracking shapes
   const [leftSectionShapes, setLeftSectionShapes] = useState([]); // Black/locked shapes
@@ -333,11 +332,6 @@ function App() {
   // Function to toggle grid visibility
   const toggleGrid = () => {
     setShowGrid(!showGrid);
-  };
-
-  // Function to toggle column snap
-  const toggleColumnSnap = () => {
-    setColumnSnap(!columnSnap);
   };
 
   // Add CSS to customize the components' widths
