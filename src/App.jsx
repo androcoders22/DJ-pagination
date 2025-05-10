@@ -5,6 +5,7 @@ import ControlPanel from "./components/ControlPanel";
 import Legend from "./components/Legend";
 import ExportedData from "./components/ExportedData";
 import AIAnalysis from "./components/AIAnalysis";
+import GridPlot from "./components/GridPlot";
 import { findBestPosition } from "./utils/gridHelpers";
 
 function App() {

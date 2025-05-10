@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { processShapesWithAI, prepareShapesForDisplay } from "../utils/openAI";
+import GridPlot from "./GridPlot";
 
 const AIAnalysis = ({ shapesData, showAIAnalysis }) => {
   const [loading, setLoading] = useState(false);
@@ -13,42 +14,39 @@ const AIAnalysis = ({ shapesData, showAIAnalysis }) => {
     setLoading(true);
     setError(null);
 
-    // Apply a fixed delay of 1500ms before making the API call
-    setTimeout(async () => {
-      try {
-        // Use environment variable for API key
-        const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    try {
+      // Use environment variable for API key
+      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-        if (!apiKey) {
-          setError("OpenAI API key not found in environment variables");
-          setLoading(false);
-          return;
-        }
-
-        const aiResult = await processShapesWithAI(
-          shapesData.leftSection,
-          shapesData.rightSection,
-          apiKey
-        );
-
-        if (aiResult.success) {
-          // Prepare the combined data for display
-          const displayData = prepareShapesForDisplay(shapesData);
-          setAnalysisResult({
-            ...displayData,
-            aiAnalysis: aiResult.analysis,
-            timestamp: aiResult.timestamp,
-          });
-        } else {
-          setError(aiResult.error);
-        }
-      } catch (err) {
-        setError(err.message || "Failed to analyze shapes with AI");
-        console.error("Error in AI analysis:", err);
-      } finally {
+      if (!apiKey) {
+        setError("OpenAI API key not found in environment variables");
         setLoading(false);
+        return;
       }
-    }, 1500);
+
+      const aiResult = await processShapesWithAI(
+        shapesData.leftSection,
+        shapesData.rightSection,
+        apiKey
+      );
+
+      if (aiResult.success) {
+        // Prepare the combined data for display
+        const displayData = prepareShapesForDisplay(shapesData);
+        setAnalysisResult({
+          ...displayData,
+          aiAnalysis: aiResult.analysis,
+          timestamp: aiResult.timestamp,
+        });
+      } else {
+        setError(aiResult.error);
+      }
+    } catch (err) {
+      setError(err.message || "Failed to analyze shapes with AI");
+      console.error("Error in AI analysis:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Auto-run analysis when component is first shown
@@ -139,9 +137,28 @@ const AIAnalysis = ({ shapesData, showAIAnalysis }) => {
               <div className="analysis-column">
                 <h3 className="column-title">AI Analysis</h3>
                 <div className="analysis-content">
-                  <pre className="ai-json-output">{analysisResult.aiAnalysis}</pre>
+                  <pre className="ai-json-output">
+                    {analysisResult.aiAnalysis}
+                  </pre>
                 </div>
               </div>
+            </div>
+            <div className="grid-plot-container">
+              <h3 className="column-title">Grid Plot</h3>
+              {analysisResult && analysisResult.aiAnalysis && (
+                <GridPlot
+                  data={
+                    typeof analysisResult.aiAnalysis === "string"
+                      ? JSON.parse(analysisResult.aiAnalysis)
+                      : analysisResult.aiAnalysis
+                  }
+                  title="AI Optimization Result"
+                  gridSize={20}
+                  gridWidth={40}
+                  gridHeight={30}
+                  showGrid={true}
+                />
+              )}
             </div>
           </div>
         ) : (

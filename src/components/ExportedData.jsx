@@ -119,9 +119,9 @@ const ExportedData = ({
             </div>
 
             <div className="analysis-button-container">
-              {/* <button className="analysis-button" onClick={handleStartAnalysis}>
+              <button className="analysis-button" onClick={handleStartAnalysis}>
                 AI Pagination Analysis
-              </button> */}
+              </button>
             </div>
           </div>
         ) : null}
