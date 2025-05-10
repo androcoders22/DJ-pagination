@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import {
-  processShapesWithAI,
-  prepareShapesForDisplay,
-} from "../utils/openAIHelper";
+import { processShapesWithAI, prepareShapesForDisplay } from "../utils/openAI";
 
 const AIAnalysis = ({ shapesData, showAIAnalysis }) => {
   const [loading, setLoading] = useState(false);
@@ -142,7 +139,7 @@ const AIAnalysis = ({ shapesData, showAIAnalysis }) => {
               <div className="analysis-column">
                 <h3 className="column-title">AI Analysis</h3>
                 <div className="analysis-content">
-                  <p>{analysisResult.aiAnalysis}</p>
+                  <pre className="ai-json-output">{analysisResult.aiAnalysis}</pre>
                 </div>
               </div>
             </div>

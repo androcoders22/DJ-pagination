@@ -1,7 +1,5 @@
-// OpenAI integration helper
 import OpenAI from "openai";
 
-// Process shape data with OpenAI
 export const processShapesWithAI = async (
   leftSectionShapes,
   rightSectionShapes,
@@ -12,13 +10,11 @@ export const processShapesWithAI = async (
       throw new Error("OpenAI API key is required");
     }
 
-    // Initialize OpenAI client with provided API key
     const openai = new OpenAI({
       apiKey,
-      dangerouslyAllowBrowser: true, // Note: In production, you should use a backend proxy
+      dangerouslyAllowBrowser: true, // no backend for now
     });
 
-    // Format the shape data
     const shapesData = {
       leftSection: leftSectionShapes.map(({ x, y, width, height }) => ({
         x,
@@ -27,36 +23,48 @@ export const processShapesWithAI = async (
         height,
       })),
       rightSection: rightSectionShapes.map(({ x, y, width, height }) => ({
-        x,
-        y,
+        // no need for cooordinates in the right section
+        // x,
+        // y,
         width,
         height,
       })),
     };
+    console.log("Shapes data for AI:", JSON.stringify(shapesData));
 
-    // Make the API request
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a spatial reasoning AI that analyzes grid-based shape placements.",
-        },
+    const prompt = `
+          Instructions:
+          - In a 40×30 grid, given two arrays:
+          - leftSection: boxes with { x, y, width, height } — fixed in position and must remain unchanged.
+          - rightSection: boxes with { width, height } — to be placed top-left to bottom-right, avoiding overlap with others or exceeding grid bounds.
+          - Return a single array combining all placed boxes as { x, y, width, height }.
+          - All leftSection boxes must be included as-is.
+          - Place as many rightSection boxes as possible.
+          - Skip any that cannot be placed.
+          - Do not modify, or overlap boxes.
+          - The output must reflect optimal tight packing starting from the top-left corner.
+          - Output in valid JSON format ('?' will bereplaced with calculated values) example :
+          {
+          "FinalLeftSection" : [{ "x": ?,  "y": ?,  "width": ?,  "height": ? },{ "x": ?,  "y": ?, "width": ?, "height": ?  },{ "x": ?, "y": ?,  "width": ?,  "height": ? },{ "x": ?,  "y": ?,  "width": ?, "height": ?  },{ "x": ?, "y": ?,  "width": ?,  "height": ? },{ "x": ?,  "y": ?,  "width": ?, "height": ?  }]
+          "Unplaced" : [{"width": ?, "height": ? },{ "width": ?, "height": ?  },{ "width": ?, "height": ? },{ "width": ?, "height": ?  },{ "width": ?, "height": ? }] 
+          }
+          Input shapes:
+          ${JSON.stringify(shapesData)}
+          `.trim();
+
+    const response = await openai.responses.create({
+      model: "o4-mini",
+      input: [
         {
           role: "user",
-          content: `Analyze these shape placements and provide insights on their layout efficiency and optimization suggestions: ${JSON.stringify(
-            shapesData
-          )}`,
+          content: prompt,
         },
       ],
-      temperature: 0.7,
-      max_tokens: 500,
     });
 
     return {
       success: true,
-      analysis: response.choices[0].message.content,
+      analysis: response.output_text,
       timestamp: new Date().toISOString(),
       shapesData,
     };
@@ -68,6 +76,8 @@ export const processShapesWithAI = async (
     };
   }
 };
+
+// STEP 3 : util funcs
 
 // Format and prepare shape data for visualization
 export const prepareShapesForDisplay = (shapesData) => {

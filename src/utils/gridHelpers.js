@@ -1,8 +1,5 @@
-// Helper functions for grid operations
+//  Check if two rectangles overlap
 
-/**
- * Check if two rectangles overlap
- */
 export const doRectanglesOverlap = (rect1, rect2) => {
   return (
     rect1.x < rect2.x + rect2.width &&
@@ -12,9 +9,7 @@ export const doRectanglesOverlap = (rect1, rect2) => {
   );
 };
 
-/**
- * Check if a position is valid
- */
+//  * Check if a position is valid
 export const isPositionValid = (
   shape,
   existingShapes,

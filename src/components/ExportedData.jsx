@@ -16,7 +16,7 @@ const ExportedData = ({
     if (showExportedData && !exportedData) {
       setLoading(true);
 
-      // Simulate loading delay of exactly 1500ms
+      // Simulate loading delay of exactly 1200ms
       const timer = setTimeout(() => {
         const formattedData = {
           leftSection: leftSectionShapes.map(({ x, y, width, height }) => ({
@@ -35,7 +35,7 @@ const ExportedData = ({
 
         setExportedData(formattedData);
         setLoading(false);
-      }, 1500);
+      }, 1200);
 
       return () => clearTimeout(timer);
     }
@@ -49,7 +49,6 @@ const ExportedData = ({
     }
   }, [showExportedData, leftSectionShapes, rightSectionShapes]);
 
-  // Handle the start analysis button click
   const handleStartAnalysis = () => {
     if (onStartAnalysis && exportedData) {
       onStartAnalysis(exportedData);
@@ -60,7 +59,7 @@ const ExportedData = ({
 
   return (
     <div className="shape-analysis full-width">
-      <h2 className="analysis-title">Geometric-Data of Shapes</h2>
+      <h2 className="analysis-title">GeometricData of Shapes</h2>
 
       <div className="analysis-results">
         {loading ? (
@@ -121,7 +120,7 @@ const ExportedData = ({
 
             <div className="analysis-button-container">
               {/* <button className="analysis-button" onClick={handleStartAnalysis}>
-                Begin AI Analysis (Step 3)
+                AI Pagination Analysis
               </button> */}
             </div>
           </div>

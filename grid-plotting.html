@@ -20,15 +20,12 @@
     canvas.height = gridH * scale;
 
     // --- Your combined array of all boxes ---
-    const shapes = [
-  { "x": 0,  "y": 2,  "width": 7,  "height": 12 },
-  { "x": 0,  "y": 25, "width": 28, "height": 5  },
-  { "x": 34, "y": 4,  "width": 6,  "height": 17 },
-  { "x": 7,  "y": 0,  "width": 21, "height": 7  },
-  { "x": 28, "y": 0,  "width": 6,  "height": 11 },
-  { "x": 7,  "y": 7,  "width": 13, "height": 5  }
-]
-
+    const shapes =   [
+    { "x": 1,  "y": 1,  "width": 10, "height": 9 },
+    { "x": 12, "y": 1,  "width": 11, "height": 9 },
+    { "x": 1,  "y": 11, "width": 22, "height": 7 },
+    { "x": 23, "y": 1,  "width": 11, "height": 24 }
+  ]
     // --- Draw grid ---
     function drawGrid() {
       ctx.strokeStyle = '#ddd';
