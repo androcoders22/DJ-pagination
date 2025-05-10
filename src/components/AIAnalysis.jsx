@@ -68,7 +68,7 @@ const AIAnalysis = ({ shapesData, showAIAnalysis }) => {
 
   return (
     <div className="shape-analysis full-width">
-      <h2 className="analysis-title">Step 3: AI Analysis</h2>
+      <h2 className="analysis-title">AI Analysis</h2>
 
       {error && (
         <div className="error-message">
@@ -144,7 +144,7 @@ const AIAnalysis = ({ shapesData, showAIAnalysis }) => {
               </div>
             </div>
             <div className="grid-plot-container">
-              <h3 className="column-title">Grid Plot</h3>
+              <h3 className="column-title">AI results Plotting</h3>
               {analysisResult && analysisResult.aiAnalysis && (
                 <GridPlot
                   data={

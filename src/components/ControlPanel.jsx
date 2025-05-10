@@ -12,7 +12,7 @@ const ControlPanel = ({
   return (
     <div className="button-container">
       <button className="action-button" onClick={autoPositionShapes}>
-        Auto-Position Shapes
+        Algorithmically place shapes
       </button>
       <button className="action-button" onClick={handleExportAll}>
         Export Coordinates
